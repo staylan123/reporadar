@@ -15,3 +15,30 @@ async def get_user(username: str) -> dict:
         response = await client.get(f"/users/{username}")
         response.raise_for_status()
         return response.json()
+
+
+async def get_user_repos(
+    username: str,
+    type: str = "owner",
+    sort: str = "updated",
+    direction: str = "desc",
+    per_page: int = 30,
+    page: int = 1,
+) -> list[dict]:
+    """GET /users/{username}/repos
+
+    https://docs.github.com/en/rest/repos/repos#list-repositories-for-a-user
+    """
+    async with httpx.AsyncClient(base_url=GITHUB_API_BASE_URL) as client:
+        response = await client.get(
+            f"/users/{username}/repos",
+            params={
+                "type": type,
+                "sort": sort,
+                "direction": direction,
+                "per_page": per_page,
+                "page": page,
+            },
+        )
+        response.raise_for_status()
+        return response.json()
