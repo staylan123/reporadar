@@ -1,5 +1,6 @@
 import { useState, type SubmitEvent } from 'react'
 import { Navbar } from '@/components/navbar'
+import { ProfileHeader } from '@/components/ProfileHeader'
 import { Input } from '@/components/ui/input'
 import { useGetUser } from '@/hooks/useGetUser'
 
@@ -16,8 +17,8 @@ const App = () => {
   return (
     <>
       <Navbar />
-      <div className="mx-auto flex max-w-sm flex-col gap-4 p-8">
-        <form onSubmit={handleSubmit}>
+      <div className="mx-auto flex max-w-2xl flex-col gap-4 p-8">
+        <form onSubmit={handleSubmit} className="max-w-sm">
           <Input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -29,19 +30,7 @@ const App = () => {
           <p className="text-sm text-muted-foreground">Loading...</p>
         )}
         {error && <p className="text-sm text-destructive">{error}</p>}
-        {data && (
-          <div className="flex items-center gap-3">
-            <img
-              src={data.avatar_url}
-              alt={data.login}
-              className="size-12 rounded-full"
-            />
-            <div>
-              <p className="font-medium">{data.name ?? data.login}</p>
-              <p className="text-sm text-muted-foreground">@{data.login}</p>
-            </div>
-          </div>
-        )}
+        {data && <ProfileHeader user={data} />}
       </div>
     </>
   )
