@@ -28,7 +28,7 @@ export const LandingPage = () => {
 
         <h1 className="text-4xl font-bold tracking-tight text-balance text-foreground sm:text-5xl">
           Explore GitHub{' '}
-          <span className="bg-gradient-to-r from-[var(--chart-1)] to-[var(--chart-4)] bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-chart-1 to-chart-4 bg-clip-text text-transparent">
             profiles &amp; repos
           </span>
         </h1>

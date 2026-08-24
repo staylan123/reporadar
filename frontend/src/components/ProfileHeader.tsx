@@ -9,14 +9,14 @@ type ProfileHeaderProps = {
 
 export const ProfileHeader = ({ user }: ProfileHeaderProps) => {
   return (
-    <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-6 sm:flex-row">
-      <img
-        src={user.avatar_url}
-        alt={user.login}
-        className="size-32 shrink-0 rounded-full border border-border"
-      />
+    <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-6">
+      <div className="flex flex-col items-center gap-3 text-center">
+        <img
+          src={user.avatar_url}
+          alt={user.login}
+          className="size-28 shrink-0 rounded-full border border-border"
+        />
 
-      <div className="flex flex-1 flex-col gap-3">
         <div>
           <h1 className="text-xl font-semibold text-card-foreground">
             {user.name ?? user.login}
@@ -32,7 +32,9 @@ export const ProfileHeader = ({ user }: ProfileHeaderProps) => {
         </div>
 
         {user.bio && <p className="text-sm text-card-foreground">{user.bio}</p>}
+      </div>
 
+      <div className="flex flex-col gap-3 border-t border-border pt-4">
         <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
           {user.location && (
             <span className="inline-flex items-center gap-1.5">
