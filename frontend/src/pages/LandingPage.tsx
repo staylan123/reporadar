@@ -38,8 +38,8 @@ export const LandingPage = () => {
           <TypeAnimation
             sequence={TYPEWRITER_SEQUENCE}
             wrapper="span"
-            speed={70}
-            deletionSpeed={80}
+            speed={35}
+            deletionSpeed={45}
             repeat={Infinity}
             className="font-semibold text-accent-foreground"
           />{' '}
