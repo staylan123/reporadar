@@ -140,3 +140,23 @@ body {
     @apply font-sans;
   }
 }
+
+.hero-gradient {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(
+      60% 55% at 15% -10%,
+      color-mix(in oklab, var(--chart-1) 22%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50% 50% at 90% 10%,
+      color-mix(in oklab, var(--chart-4) 20%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      45% 40% at 50% 110%,
+      color-mix(in oklab, var(--chart-2) 16%, transparent),
+      transparent 70%
+    );
+}
