@@ -1,6 +1,7 @@
 import { useState, type SubmitEvent } from 'react'
 import { Navbar } from '@/components/navbar'
 import { ProfileHeader } from '@/components/ProfileHeader'
+import { RepoList } from '@/components/RepoList'
 import { Input } from '@/components/ui/input'
 import { useGetUser } from '@/hooks/useGetUser'
 
@@ -30,7 +31,12 @@ const App = () => {
           <p className="text-sm text-muted-foreground">Loading...</p>
         )}
         {error && <p className="text-sm text-destructive">{error}</p>}
-        {data && <ProfileHeader user={data} />}
+        {data && (
+          <>
+            <ProfileHeader user={data} />
+            <RepoList username={data.login} />
+          </>
+        )}
       </div>
     </>
   )

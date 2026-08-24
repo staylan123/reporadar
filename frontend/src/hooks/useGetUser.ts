@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react'
+import { API_BASE_URL } from '@/lib/utils'
 import type { GithubUser } from '@/types/github'
-
-const API_BASE_URL = 'http://localhost:8000'
 
 type UseGetUserResult = {
   data: GithubUser | null
