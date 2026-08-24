@@ -1,5 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { FiExternalLink, FiGitBranch, FiStar } from 'react-icons/fi'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useGetUserRepos } from '@/hooks/useGetUserRepos'
 import { formatDate } from '@/lib/utils'
 import { LANGUAGE_COLORS } from '@/lib/languageColors'
@@ -8,36 +15,64 @@ type RepoListProps = {
   username: string
 }
 
+type SortOption = 'full_name' | 'created' | 'updated'
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'updated', label: 'Last updated' },
+  { value: 'created', label: 'Created' },
+  { value: 'full_name', label: 'Name' },
+]
+
 export const RepoList = ({ username }: RepoListProps) => {
+  const [sort, setSort] = useState<SortOption>('updated')
   const { data, loading, error, getUserRepos } = useGetUserRepos()
 
   useEffect(() => {
-    getUserRepos(username, { sort: 'updated' })
-  }, [username, getUserRepos])
-
-  if (loading) {
-    return <p className="text-sm text-muted-foreground">Loading repos...</p>
-  }
-  if (error) {
-    return <p className="text-sm text-destructive">{error}</p>
-  }
-  if (!data) {
-    return null
-  }
+    getUserRepos(username, { sort })
+  }, [username, sort, getUserRepos])
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4">
-      <h2 className="text-sm font-semibold text-card-foreground">
-        Repositories
-        <span className="ml-1.5 font-normal text-muted-foreground">
-          ({data.length})
-        </span>
-      </h2>
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold text-card-foreground">
+          Repositories
+          {data && (
+            <span className="ml-1.5 font-normal text-muted-foreground">
+              ({data.length})
+            </span>
+          )}
+        </h2>
 
-      {data.length === 0 ? (
+        <Select
+          value={sort}
+          onValueChange={(value) => value && setSort(value)}
+        >
+          <SelectTrigger
+            size="sm"
+            aria-label="Sort repositories"
+            disabled={loading}
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {SORT_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {loading && !data && (
+        <p className="text-sm text-muted-foreground">Loading repos...</p>
+      )}
+      {error && <p className="text-sm text-destructive">{error}</p>}
+      {!error && data && data.length === 0 && (
         <p className="text-sm text-muted-foreground">No repositories.</p>
-      ) : (
-        <div className="flex max-h-[32rem] flex-col divide-y divide-border overflow-y-auto">
+      )}
+      {!error && data && data.length > 0 && (
+        <div className="flex max-h-128 flex-col divide-y divide-border overflow-y-auto">
           {data.map((repo) => (
             <div key={repo.id} className="flex flex-col gap-2 py-4 first:pt-0 last:pb-0">
               <div className="flex flex-wrap items-center gap-2">
