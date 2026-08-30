@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import ActivityLog from '@/components/ActivityLog'
 import ProfileHeader from '@/components/ProfileHeader'
 import RepoPreview from '@/components/RepoPreview'
+import StatsCard from '@/components/StatsCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useGetUser } from '@/hooks/useGetUser'
@@ -49,7 +50,10 @@ const SearchPage = () => {
       {error && <p className="text-sm text-destructive">{error}</p>}
       {data && (
         <div className="grid gap-4 lg:grid-cols-[22rem_1fr] lg:items-start">
-          <ProfileHeader user={data} />
+          <div className="flex flex-col gap-4">
+            <ProfileHeader user={data} />
+            <StatsCard user={data} />
+          </div>
           <div className="flex flex-col gap-4">
             <RepoPreview
               username={data.login}
