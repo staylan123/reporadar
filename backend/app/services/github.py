@@ -49,3 +49,28 @@ async def get_user_repos(
             "repos": response.json(),
             "has_next": "next" in response.links,
         }
+
+
+async def get_user_activity(
+    username: str,
+    per_page: int = 30,
+    page: int = 1,
+) -> dict:
+    """GET /users/{username}/events/public
+
+    https://docs.github.com/en/rest/activity/events#list-public-events-for-a-user
+
+    Public events only — we call unauthenticated, so private activity isn't
+    visible anyway. GitHub caps this at the user's most recent ~300 events
+    (last 90 days), regardless of pagination.
+    """
+    async with httpx.AsyncClient(base_url=GITHUB_API_BASE_URL) as client:
+        response = await client.get(
+            f"/users/{username}/events/public",
+            params={"per_page": per_page, "page": page},
+        )
+        response.raise_for_status()
+        return {
+            "activity": response.json(),
+            "has_next": "next" in response.links,
+        }

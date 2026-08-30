@@ -34,6 +34,25 @@ async def get_user(username: str) -> dict:
         ) from exc
 
 
+@app.get("/users/{username}/activity")
+async def get_user_activity(
+    username: str,
+    per_page: int = Query(default=30, ge=1, le=100),
+    page: int = Query(default=1, ge=1),
+) -> dict:
+    try:
+        return await github.get_user_activity(
+            username,
+            per_page=per_page,
+            page=page,
+        )
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(
+            status_code=exc.response.status_code,
+            detail=f"GitHub user '{username}' not found",
+        ) from exc
+
+
 @app.get("/users/{username}/repos")
 async def get_user_repos(
     username: str,
