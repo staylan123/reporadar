@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { API_BASE_URL } from '@/lib/utils'
+import { API } from '@/lib/api'
 import type { GithubUser } from '@/types/github'
 
 type UseGetUserResult = {
@@ -19,7 +19,7 @@ export const useGetUser = (): UseGetUserResult => {
     setError(null)
 
     try {
-      const res = await fetch(`${API_BASE_URL}/users/${username}`)
+      const res = await fetch(API.GITHUB.GET_USER(username))
       if (!res.ok) {
         throw new Error(`Failed to fetch user "${username}" (${res.status})`)
       }

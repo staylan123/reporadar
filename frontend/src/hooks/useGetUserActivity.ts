@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { API_BASE_URL } from '@/lib/utils'
+import { API } from '@/lib/api'
 import type { GithubEvent } from '@/types/github'
 
 type GetUserActivityParams = {
@@ -47,7 +47,7 @@ export const useGetUserActivity = (): UseGetUserActivityResult => {
 
       try {
         const res = await fetch(
-          `${API_BASE_URL}/users/${username}/activity?${query.toString()}`,
+          `${API.GITHUB.GET_USER_ACTIVITY(username)}?${query.toString()}`,
         )
         if (!res.ok) {
           throw new Error(

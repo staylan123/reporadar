@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { API_BASE_URL } from '@/lib/utils'
+import { API } from '@/lib/api'
 import type { GithubRepo } from '@/types/github'
 
 type GetUserReposParams = {
@@ -50,7 +50,7 @@ export const useGetUserRepos = (): UseGetUserReposResult => {
 
       try {
         const res = await fetch(
-          `${API_BASE_URL}/users/${username}/repos?${query.toString()}`,
+          `${API.GITHUB.GET_USER_REPOS(username)}?${query.toString()}`,
         )
         if (!res.ok) {
           throw new Error(
