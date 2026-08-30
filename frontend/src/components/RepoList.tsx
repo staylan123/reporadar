@@ -22,6 +22,7 @@ import { LANGUAGE_COLORS } from '@/lib/languageColors'
 
 type RepoListProps = {
   username: string
+  totalRepos: number
 }
 
 type SortOption = 'full_name' | 'created' | 'updated'
@@ -36,7 +37,7 @@ const DEFAULT_SORT: SortOption = 'updated'
 const isSortOption = (value: string | null): value is SortOption =>
   SORT_OPTIONS.some((option) => option.value === value)
 
-export const RepoList = ({ username }: RepoListProps) => {
+export const RepoList = ({ username, totalRepos }: RepoListProps) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const { data, hasNext, loading, error, getUserRepos, retry } =
     useGetUserRepos()
@@ -70,11 +71,9 @@ export const RepoList = ({ username }: RepoListProps) => {
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-card-foreground">
           Repositories
-          {data && (
-            <span className="ml-1.5 font-normal text-muted-foreground">
-              ({data.length})
-            </span>
-          )}
+          <span className="ml-1.5 font-normal text-muted-foreground">
+            ({totalRepos})
+          </span>
         </h2>
 
         <Select value={sort} onValueChange={handleSortChange}>
@@ -83,7 +82,12 @@ export const RepoList = ({ username }: RepoListProps) => {
             aria-label="Sort repositories"
             disabled={loading}
           >
-            <SelectValue />
+            <SelectValue>
+              {(value: SortOption) =>
+                SORT_OPTIONS.find((option) => option.value === value)
+                  ?.label ?? value
+              }
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {SORT_OPTIONS.map((option) => (

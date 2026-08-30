@@ -36,7 +36,7 @@ export const SearchPage = () => {
         <div className="grid gap-4 lg:grid-cols-[22rem_1fr] lg:items-start">
           <ProfileHeader user={data} />
           <div className="flex flex-col gap-4">
-            <RepoList username={data.login} />
+            <RepoList username={data.login} totalRepos={data.public_repos} />
           </div>
         </div>
       )}
