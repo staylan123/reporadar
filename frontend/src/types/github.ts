@@ -31,3 +31,23 @@ export type GithubRepo = {
   updated_at: string
   pushed_at: string
 }
+
+// GitHub's Events API — payload shape varies by `type` (PushEvent,
+// PullRequestEvent, WatchEvent, ...), so it's typed loosely here and
+// narrowed per-type where it's read.
+export type GithubEvent = {
+  id: string
+  type: string
+  actor: {
+    id: number
+    login: string
+    avatar_url: string
+  }
+  repo: {
+    id: number
+    name: string
+  }
+  payload: Record<string, any>
+  public: boolean
+  created_at: string
+}

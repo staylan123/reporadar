@@ -1,6 +1,7 @@
 import { useEffect, useState, type SubmitEvent } from 'react'
 import { FiSearch } from 'react-icons/fi'
 import { useNavigate, useParams } from 'react-router-dom'
+import ActivityLog from '@/components/ActivityLog'
 import ProfileHeader from '@/components/ProfileHeader'
 import RepoPreview from '@/components/RepoPreview'
 import { Button } from '@/components/ui/button'
@@ -54,6 +55,7 @@ const SearchPage = () => {
               username={data.login}
               totalRepos={data.public_repos}
             />
+            <ActivityLog username={data.login} />
           </div>
         </div>
       )}
