@@ -1,7 +1,8 @@
 import { Route, Routes } from 'react-router-dom'
-import { Navbar } from '@/components/navbar'
-import { LandingPage } from '@/pages/LandingPage'
-import { SearchPage } from '@/pages/SearchPage'
+import Navbar from '@/components/navbar'
+import LandingPage from '@/pages/LandingPage'
+import RepoPage from '@/pages/RepoPage'
+import SearchPage from '@/pages/SearchPage'
 
 const App = () => {
   return (
@@ -10,6 +11,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/search/:username" element={<SearchPage />} />
+        <Route path="/search/:username/repos" element={<RepoPage />} />
       </Routes>
     </>
   )

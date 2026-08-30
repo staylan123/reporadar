@@ -1,19 +1,33 @@
-import { useState, type SubmitEvent } from 'react'
+import { useEffect, useState, type SubmitEvent } from 'react'
 import { FiSearch } from 'react-icons/fi'
-import { ProfileHeader } from '@/components/ProfileHeader'
-import { RepoList } from '@/components/RepoList'
+import { useNavigate, useParams } from 'react-router-dom'
+import ProfileHeader from '@/components/ProfileHeader'
+import RepoPreview from '@/components/RepoPreview'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useGetUser } from '@/hooks/useGetUser'
 
-export const SearchPage = () => {
-  const [username, setUsername] = useState('')
+const SearchPage = () => {
+  const { username: usernameParam } = useParams<{ username?: string }>()
+  const navigate = useNavigate()
+  const [username, setUsername] = useState(usernameParam ?? '')
   const { data, loading, error, getUser } = useGetUser()
+
+  // Keep the input in sync when the URL's username changes from outside
+  // this form (e.g. browser back/forward).
+  useEffect(() => {
+    setUsername(usernameParam ?? '')
+  }, [usernameParam])
+
+  useEffect(() => {
+    if (usernameParam) getUser(usernameParam)
+  }, [usernameParam, getUser])
 
   const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!username.trim()) return
-    getUser(username.trim())
+    const trimmed = username.trim()
+    if (!trimmed) return
+    navigate(`/search/${trimmed}`)
   }
 
   return (
@@ -36,10 +50,15 @@ export const SearchPage = () => {
         <div className="grid gap-4 lg:grid-cols-[22rem_1fr] lg:items-start">
           <ProfileHeader user={data} />
           <div className="flex flex-col gap-4">
-            <RepoList username={data.login} totalRepos={data.public_repos} />
+            <RepoPreview
+              username={data.login}
+              totalRepos={data.public_repos}
+            />
           </div>
         </div>
       )}
     </div>
   )
 }
+
+export default SearchPage
