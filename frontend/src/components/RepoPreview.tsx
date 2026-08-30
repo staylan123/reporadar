@@ -65,10 +65,12 @@ const RepoPreview = ({ username, totalRepos }: RepoPreviewProps) => {
       )}
 
       {!error && data && data.length > 0 && (
-        <div className="flex flex-col divide-y divide-border">
-          {data.map((repo) => (
-            <RepoListItem key={repo.id} repo={repo} />
-          ))}
+        <div className="-mx-1 max-h-[500px] overflow-y-auto px-1">
+          <div className="flex flex-col divide-y divide-border">
+            {data.map((repo) => (
+              <RepoListItem key={repo.id} repo={repo} />
+            ))}
+          </div>
         </div>
       )}
     </div>
