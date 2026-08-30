@@ -24,10 +24,14 @@ async def get_user_repos(
     direction: str = "desc",
     per_page: int = 30,
     page: int = 1,
-) -> list[dict]:
+) -> dict:
     """GET /users/{username}/repos
 
     https://docs.github.com/en/rest/repos/repos#list-repositories-for-a-user
+
+    GitHub paginates this by page number and doesn't return a total count in
+    the body, so we read the `Link` response header (rel="next") to tell the
+    caller whether another page exists, instead of guessing from per_page.
     """
     async with httpx.AsyncClient(base_url=GITHUB_API_BASE_URL) as client:
         response = await client.get(
@@ -41,4 +45,7 @@ async def get_user_repos(
             },
         )
         response.raise_for_status()
-        return response.json()
+        return {
+            "repos": response.json(),
+            "has_next": "next" in response.links,
+        }

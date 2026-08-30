@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { API_BASE_URL } from '@/lib/utils'
 import type { GithubRepo } from '@/types/github'
 
@@ -10,23 +10,36 @@ type GetUserReposParams = {
   page?: number
 }
 
+type GetUserReposResponse = {
+  repos: GithubRepo[]
+  has_next: boolean
+}
+
 type UseGetUserReposResult = {
   data: GithubRepo[] | null
+  hasNext: boolean
   loading: boolean
   error: string | null
   getUserRepos: (
     username: string,
     params?: GetUserReposParams,
   ) => Promise<void>
+  retry: () => void
 }
 
 export const useGetUserRepos = (): UseGetUserReposResult => {
   const [data, setData] = useState<GithubRepo[] | null>(null)
+  const [hasNext, setHasNext] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const lastCallRef = useRef<{
+    username: string
+    params: GetUserReposParams
+  } | null>(null)
 
   const getUserRepos = useCallback(
     async (username: string, params: GetUserReposParams = {}) => {
+      lastCallRef.current = { username, params }
       setLoading(true)
       setError(null)
 
@@ -44,11 +57,13 @@ export const useGetUserRepos = (): UseGetUserReposResult => {
             `Failed to fetch repos for "${username}" (${res.status})`,
           )
         }
-        const json = (await res.json()) as GithubRepo[]
-        setData(json)
+        const json = (await res.json()) as GetUserReposResponse
+        setData(json.repos)
+        setHasNext(json.has_next)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong')
         setData(null)
+        setHasNext(false)
       } finally {
         setLoading(false)
       }
@@ -56,5 +71,11 @@ export const useGetUserRepos = (): UseGetUserReposResult => {
     [],
   )
 
-  return { data, loading, error, getUserRepos }
+  const retry = useCallback(() => {
+    if (!lastCallRef.current) return
+    const { username, params } = lastCallRef.current
+    getUserRepos(username, params)
+  }, [getUserRepos])
+
+  return { data, hasNext, loading, error, getUserRepos, retry }
 }

@@ -1,5 +1,14 @@
-import { useEffect, useState } from 'react'
-import { FiExternalLink, FiGitBranch, FiStar } from 'react-icons/fi'
+import { useEffect } from 'react'
+import {
+  FiChevronLeft,
+  FiChevronRight,
+  FiExternalLink,
+  FiGitBranch,
+  FiRefreshCw,
+  FiStar,
+} from 'react-icons/fi'
+import { useSearchParams } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -22,14 +31,39 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'created', label: 'Created' },
   { value: 'full_name', label: 'Name' },
 ]
+const DEFAULT_SORT: SortOption = 'updated'
+
+const isSortOption = (value: string | null): value is SortOption =>
+  SORT_OPTIONS.some((option) => option.value === value)
 
 export const RepoList = ({ username }: RepoListProps) => {
-  const [sort, setSort] = useState<SortOption>('updated')
-  const { data, loading, error, getUserRepos } = useGetUserRepos()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const { data, hasNext, loading, error, getUserRepos, retry } =
+    useGetUserRepos()
+
+  const sortParam = searchParams.get('sort')
+  const sort = isSortOption(sortParam) ? sortParam : DEFAULT_SORT
+
+  const pageParam = Number(searchParams.get('page'))
+  const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
 
   useEffect(() => {
-    getUserRepos(username, { sort })
-  }, [username, sort, getUserRepos])
+    getUserRepos(username, { sort, page })
+  }, [username, sort, page, getUserRepos])
+
+  const handleSortChange = (value: string) => {
+    if (!isSortOption(value)) return
+    const params = new URLSearchParams(searchParams)
+    params.set('sort', value)
+    params.set('page', '1') // changing sort restarts pagination
+    setSearchParams(params)
+  }
+
+  const goToPage = (nextPage: number) => {
+    const params = new URLSearchParams(searchParams)
+    params.set('page', String(nextPage))
+    setSearchParams(params)
+  }
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4">
@@ -43,10 +77,7 @@ export const RepoList = ({ username }: RepoListProps) => {
           )}
         </h2>
 
-        <Select
-          value={sort}
-          onValueChange={(value) => value && setSort(value)}
-        >
+        <Select value={sort} onValueChange={handleSortChange}>
           <SelectTrigger
             size="sm"
             aria-label="Sort repositories"
@@ -67,14 +98,34 @@ export const RepoList = ({ username }: RepoListProps) => {
       {loading && !data && (
         <p className="text-sm text-muted-foreground">Loading repos...</p>
       )}
-      {error && <p className="text-sm text-destructive">{error}</p>}
+
+      {error && (
+        <div className="flex items-center justify-between gap-3 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2">
+          <p className="text-sm text-destructive">{error}</p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="shrink-0 gap-1.5"
+            onClick={retry}
+            disabled={loading}
+          >
+            <FiRefreshCw className="size-3.5" />
+            Retry
+          </Button>
+        </div>
+      )}
+
       {!error && data && data.length === 0 && (
         <p className="text-sm text-muted-foreground">No repositories.</p>
       )}
+
       {!error && data && data.length > 0 && (
-        <div className="flex max-h-128 flex-col divide-y divide-border overflow-y-auto">
+        <div className="flex flex-col divide-y divide-border">
           {data.map((repo) => (
-            <div key={repo.id} className="flex flex-col gap-2 py-4 first:pt-0 last:pb-0">
+            <div
+              key={repo.id}
+              className="flex flex-col gap-2 py-4 first:pt-0 last:pb-0"
+            >
               <div className="flex flex-wrap items-center gap-2">
                 <a
                   href={repo.html_url}
@@ -128,6 +179,32 @@ export const RepoList = ({ username }: RepoListProps) => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {!error && data && (page > 1 || hasNext) && (
+        <div className="flex items-center justify-between gap-2 border-t border-border pt-3">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => goToPage(page - 1)}
+            disabled={page <= 1 || loading}
+          >
+            <FiChevronLeft className="size-3.5" />
+            Previous
+          </Button>
+          <span className="text-xs text-muted-foreground">Page {page}</span>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => goToPage(page + 1)}
+            disabled={!hasNext || loading}
+          >
+            Next
+            <FiChevronRight className="size-3.5" />
+          </Button>
         </div>
       )}
     </div>

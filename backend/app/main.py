@@ -42,7 +42,7 @@ async def get_user_repos(
     direction: Literal["asc", "desc"] = "desc",
     per_page: int = Query(default=30, ge=1, le=100),
     page: int = Query(default=1, ge=1),
-) -> list[dict]:
+) -> dict:
     try:
         return await github.get_user_repos(
             username,
