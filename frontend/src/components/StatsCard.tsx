@@ -1,26 +1,19 @@
-import { useEffect, useMemo, type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { FiCode, FiGitBranch, FiRefreshCw, FiStar, FiZap } from 'react-icons/fi'
 import { Button } from '@/components/ui/button'
-import { useGetUserRepos } from '@/hooks/useGetUserRepos'
 import { LANGUAGE_COLORS } from '@/lib/languageColors'
-import { computeRepoStats } from '@/lib/repoStats'
-import type { GithubUser } from '@/types/github'
+import { computeRepoStats, REPO_SAMPLE_SIZE } from '@/lib/repoStats'
+import type { GithubRepo, GithubUser } from '@/types/github'
 
 type StatsCardProps = {
   user: GithubUser
+  repos: GithubRepo[] | null
+  loading: boolean
+  error: string | null
+  onRetry: () => void
 }
 
-// GitHub caps `per_page` at 100 and we don't paginate here, so stats are
-// computed from the user's 100 most recently updated repos.
-const REPO_SAMPLE_SIZE = 100
-
-const StatsCard = ({ user }: StatsCardProps) => {
-  const { data: repos, loading, error, getUserRepos, retry } = useGetUserRepos()
-
-  useEffect(() => {
-    getUserRepos(user.login, { per_page: REPO_SAMPLE_SIZE })
-  }, [user.login, getUserRepos])
-
+const StatsCard = ({ user, repos, loading, error, onRetry }: StatsCardProps) => {
   const stats = useMemo(
     () => (repos ? computeRepoStats(repos, user) : null),
     [repos, user],
@@ -42,7 +35,7 @@ const StatsCard = ({ user }: StatsCardProps) => {
             variant="outline"
             size="sm"
             className="shrink-0 gap-1.5"
-            onClick={retry}
+            onClick={onRetry}
             disabled={loading}
           >
             <FiRefreshCw className="size-3.5" />
