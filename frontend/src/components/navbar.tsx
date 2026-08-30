@@ -1,8 +1,8 @@
 import { GitFork } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { ThemeToggle } from '@/components/theme-toggle'
+import ThemeToggle from '@/components/theme-toggle'
 
-export const Navbar = () => {
+const Navbar = () => {
   return (
     <header className="sticky top-0 z-10 border-b border-border bg-background">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
@@ -15,3 +15,5 @@ export const Navbar = () => {
     </header>
   )
 }
+
+export default Navbar

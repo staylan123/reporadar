@@ -7,7 +7,7 @@ type ThemeProviderProps = {
   storageKey?: string
 }
 
-export const ThemeProvider = ({
+const ThemeProvider = ({
   children,
   defaultTheme = 'dark',
   storageKey = 'reporadar-theme',
@@ -34,3 +34,5 @@ export const ThemeProvider = ({
     </ThemeProviderContext.Provider>
   )
 }
+
+export default ThemeProvider

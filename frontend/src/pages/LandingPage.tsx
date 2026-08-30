@@ -17,7 +17,7 @@ const CODE_WORDS = [
 
 const TYPEWRITER_SEQUENCE = CODE_WORDS.flatMap((word) => [word, 1400])
 
-export const LandingPage = () => {
+const LandingPage = () => {
   return (
     <div className="hero-gradient flex min-h-[calc(100svh-3.5rem)] items-center justify-center px-4">
       <div className="flex max-w-2xl flex-col items-center gap-6 text-center">
@@ -57,3 +57,5 @@ export const LandingPage = () => {
     </div>
   )
 }
+
+export default LandingPage
