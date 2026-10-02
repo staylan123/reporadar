@@ -1,6 +1,9 @@
 export type GithubUser = {
   login: string
   id: number
+  // GitHub's /users/{username} returns both personal accounts and orgs under
+  // this one endpoint — this is the only field that tells them apart.
+  type: 'User' | 'Organization'
   avatar_url: string
   html_url: string
   name: string | null

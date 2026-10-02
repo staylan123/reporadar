@@ -2,6 +2,7 @@ import { useEffect, useState, type SubmitEvent } from 'react'
 import { FiSearch } from 'react-icons/fi'
 import { useNavigate, useParams } from 'react-router-dom'
 import ActivityLog from '@/components/ActivityLog'
+import ContributionHeatmap from '@/components/ContributionHeatmap'
 import ProfileHeader from '@/components/ProfileHeader'
 import RepoInsights from '@/components/RepoInsights'
 import RepoPreview from '@/components/RepoPreview'
@@ -53,6 +54,9 @@ const SearchPage = () => {
           <ProfileHeader user={data} />
           <div className="flex flex-col gap-4">
             <RepoInsights user={data} />
+            {data.type === 'User' && (
+              <ContributionHeatmap username={data.login} />
+            )}
             <RepoPreview
               username={data.login}
               totalRepos={data.public_repos}
