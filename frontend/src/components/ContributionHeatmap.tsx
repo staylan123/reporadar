@@ -34,7 +34,7 @@ const ContributionHeatmap = ({ username }: ContributionHeatmapProps) => {
   }, [data])
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4">
+    <div className="flex min-w-0 flex-col gap-3 rounded-lg border border-border bg-card p-4">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-card-foreground">
           Contributions

@@ -50,9 +50,9 @@ const SearchPage = () => {
       {loading && <p className="text-sm text-muted-foreground">Loading...</p>}
       {error && <p className="text-sm text-destructive">{error}</p>}
       {data && (
-        <div className="grid gap-4 lg:grid-cols-[22rem_1fr] lg:items-start">
+        <div className="grid min-w-0 gap-4 lg:grid-cols-[22rem_1fr] lg:items-start">
           <ProfileHeader user={data} />
-          <div className="flex flex-col gap-4">
+          <div className="flex min-w-0 flex-col gap-4">
             <RepoInsights user={data} />
             {data.type === 'User' && (
               <ContributionHeatmap username={data.login} />
