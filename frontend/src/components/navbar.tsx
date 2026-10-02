@@ -10,7 +10,15 @@ const Navbar = () => {
           <GitFork className="size-5" />
           <span>RepoRadar</span>
         </Link>
-        <ThemeToggle />
+        <div className="flex items-center gap-4">
+          <Link
+            to="/about"
+            className="text-sm text-muted-foreground hover:text-accent-foreground hover:underline"
+          >
+            About
+          </Link>
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   )
