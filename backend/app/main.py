@@ -56,6 +56,21 @@ async def get_user_activity(
         ) from exc
 
 
+@app.get("/users/{username}/contributions")
+async def get_user_contributions(username: str) -> dict:
+    try:
+        return await github.get_user_contributions(username)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(
+            status_code=exc.response.status_code,
+            detail=f"GitHub user '{username}' not found",
+        ) from exc
+
+
 @app.get("/users/{username}/repos")
 async def get_user_repos(
     username: str,
