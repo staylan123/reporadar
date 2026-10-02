@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Literal
 
 import httpx
@@ -7,7 +8,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.services import github
 
-load_dotenv()  # picks up GITHUB_TOKEN from backend/.env in local dev
+# load_dotenv() with no path searches from the process's current working
+# directory, not this file's location — `npm run dev` launches uvicorn with
+# cwd at the repo root, one level above backend/.env, so the default lookup
+# never found it. Pointing at it explicitly makes this work regardless of
+# where the process is started from.
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 app = FastAPI(title="RepoRadar API")
 
