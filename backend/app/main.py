@@ -1,10 +1,13 @@
 from typing import Literal
 
 import httpx
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.services import github
+
+load_dotenv()  # picks up GITHUB_TOKEN from backend/.env in local dev
 
 app = FastAPI(title="RepoRadar API")
 
