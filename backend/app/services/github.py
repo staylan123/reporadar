@@ -10,6 +10,28 @@ import os
 import httpx
 
 GITHUB_API_BASE_URL = "https://api.github.com"
+GITHUB_GRAPHQL_URL = "https://api.github.com/graphql"
+
+# The contribution calendar (the heatmap on a GitHub profile) isn't exposed
+# by any REST endpoint — it only exists via GraphQL's contributionsCollection
+# field, which GitHub requires authentication for on every call.
+CONTRIBUTIONS_QUERY = """
+query($login: String!) {
+  user(login: $login) {
+    contributionsCollection {
+      contributionCalendar {
+        totalContributions
+        weeks {
+          contributionDays {
+            date
+            contributionCount
+          }
+        }
+      }
+    }
+  }
+}
+"""
 
 
 def _headers() -> dict[str, str]:
@@ -69,6 +91,35 @@ async def get_user_repos(
             "repos": response.json(),
             "has_next": "next" in response.links,
         }
+
+
+async def get_user_contributions(username: str) -> dict:
+    """POST to the GraphQL endpoint for a user's daily contribution calendar.
+
+    Unlike the REST calls above, this has no unauthenticated fallback —
+    GraphQL always requires a token, so GITHUB_TOKEN must be set.
+    """
+    if "Authorization" not in _headers():
+        raise RuntimeError("GITHUB_TOKEN is required for contribution data")
+
+    async with httpx.AsyncClient(headers=_headers()) as client:
+        response = await client.post(
+            GITHUB_GRAPHQL_URL,
+            json={"query": CONTRIBUTIONS_QUERY, "variables": {"login": username}},
+        )
+        response.raise_for_status()
+        body = response.json()
+
+    if body.get("errors"):
+        raise LookupError(body["errors"][0]["message"])
+
+    calendar = body["data"]["user"]["contributionsCollection"]["contributionCalendar"]
+    days = [
+        {"date": day["date"], "count": day["contributionCount"]}
+        for week in calendar["weeks"]
+        for day in week["contributionDays"]
+    ]
+    return {"total": calendar["totalContributions"], "days": days}
 
 
 async def get_user_activity(
