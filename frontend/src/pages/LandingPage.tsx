@@ -10,8 +10,8 @@ const CODE_WORDS = [
   'pull requests',
   'commits',
   'issues',
-  'contributors',
-  'open source',
+  'languages',
+  'contributions',
   'stars',
 ]
 
