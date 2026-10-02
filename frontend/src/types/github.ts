@@ -32,6 +32,16 @@ export type GithubRepo = {
   pushed_at: string
 }
 
+export type GithubContributionDay = {
+  date: string
+  count: number
+}
+
+export type GithubContributions = {
+  total: number
+  days: GithubContributionDay[]
+}
+
 // GitHub's Events API — payload shape varies by `type` (PushEvent,
 // PullRequestEvent, WatchEvent, ...), so it's typed loosely here and
 // narrowed per-type where it's read.
