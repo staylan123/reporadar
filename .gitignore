@@ -228,3 +228,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .pnpm-store/
+
+.vercel
+.env*
+!.env.example
