@@ -44,8 +44,8 @@ const RepoList = ({ username, totalRepos }: RepoListProps) => {
     getUserRepos(username, { sort, page })
   }, [username, sort, page, getUserRepos])
 
-  const handleSortChange = (value: string) => {
-    if (!isSortOption(value)) return
+  const handleSortChange = (value: string | null) => {
+    if (!value || !isSortOption(value)) return
     const params = new URLSearchParams(searchParams)
     params.set('sort', value)
     params.set('page', '1') // changing sort restarts pagination
